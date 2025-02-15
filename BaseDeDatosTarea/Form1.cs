@@ -98,6 +98,8 @@ namespace BaseDeDatosTarea
             {
                 MessageBox.Show("Usuario validado correctamente.");
                 Form2 form2 = new Form2(username);
+                form2.Show();
+                this.Hide();
             }
             else
             {

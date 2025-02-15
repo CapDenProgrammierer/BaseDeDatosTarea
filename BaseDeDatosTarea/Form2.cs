@@ -7,14 +7,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.Linq;
 
 namespace BaseDeDatosTarea
 {
     public partial class Form2 : Form
     {
-        public Form2(string username)
+        private string _loggedUser;
+        public Form2(string loggedUser)
         {
             InitializeComponent();
+            _loggedUser = loggedUser;
         }
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            lblUser.Text = "Bienvenido, " + _loggedUser;
+            LoadActiveLoans();
+        }
+
+        private void LoadActiveLoans()
+        {
+            try
+            {
+                using (var context = new ToolBorrowingEntities())
+                {
+                    // Llamar al procedimiento almacenado GetActiveLoans pasándole el parámetro @UserId
+                    var loans = context.Database.SqlQuery<ActiveLoan>(
+                        "EXEC GetActiveLoans @UserId",
+                        new SqlParameter("@UserId", _loggedUser)
+                    ).ToList();
+
+                    dgvLoans.DataSource = loans;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar los préstamos: " + ex.Message);
+            }
+        }
+    }
+    public class ActiveLoan
+    {
+        public int Id { get; set; }
+        public string UserId { get; set; }
+        public string ToolName { get; set; }
+        public DateTime LoanDate { get; set; }
+        public string Status { get; set; }
     }
 }
