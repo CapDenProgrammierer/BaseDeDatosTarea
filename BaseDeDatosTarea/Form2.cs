@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace BaseDeDatosTarea
 {
@@ -44,6 +43,62 @@ namespace BaseDeDatosTarea
             catch (Exception ex)
             {
                 MessageBox.Show("Error al cargar los préstamos: " + ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // textBox1 contendrá el ToolId para el nuevo préstamo.
+            if (!int.TryParse(textBox1.Text.Trim(), out int toolId))
+            {
+                MessageBox.Show("Ingrese un ToolId válido.");
+                return;
+            }
+
+            try
+            {
+                // Usando la cadena de conexión dinámica almacenada en GlobalConfig (o pasarla directamente)
+                using (var context = new ToolBorrowingEntities(GlobalCOnfig.EFConnectionString))
+                {
+                    context.Database.ExecuteSqlCommand(
+                        "EXEC InsertLoan @UserId, @ToolId",
+                        new SqlParameter("@UserId", _loggedUser),
+                        new SqlParameter("@ToolId", toolId)
+                    );
+                }
+                MessageBox.Show("Loan insertado correctamente.");
+                LoadActiveLoans(); // Refrescar la lista de Loans
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al insertar el loan: " + ex.Message);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // En este caso, textBox1 contendrá el LoanId del préstamo a actualizar.
+            if (!int.TryParse(textBox1.Text.Trim(), out int loanId))
+            {
+                MessageBox.Show("Ingrese un LoanId válido.");
+                return;
+            }
+
+            try
+            {
+                using (var context = new ToolBorrowingEntities(GlobalCOnfig.EFConnectionString))
+                {
+                    context.Database.ExecuteSqlCommand(
+                        "EXEC ReturnLoan @LoanId",
+                        new SqlParameter("@LoanId", loanId)
+                    );
+                }
+                MessageBox.Show("Loan actualizado (devuelto) correctamente.");
+                LoadActiveLoans(); // Refrescar la lista de Loans
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al actualizar el loan: " + ex.Message);
             }
         }
     }

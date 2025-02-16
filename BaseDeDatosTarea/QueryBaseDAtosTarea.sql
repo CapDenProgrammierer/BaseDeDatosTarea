@@ -132,7 +132,7 @@ GO
 -- Procedimiento para obtener todos los préstamos activos
 CREATE OR ALTER PROCEDURE GetActiveLoans (@UserId VARCHAR(20))
 AS
-BEGINA
+BEGIN
     SELECT l.Id, l.UserId, t.Name AS ToolName, l.LoanDate, l.Status
     FROM Loans l
     INNER JOIN Tools t ON l.ToolId = t.Id
@@ -195,3 +195,7 @@ VALUES
 
   SELECT * FROM sys.database_role_members
 SELECT * FROM sys.database_principals
+
+select * from Loans
+
+select * from Tools

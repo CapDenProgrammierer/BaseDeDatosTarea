@@ -21,7 +21,12 @@ namespace BaseDeDatosTarea
             : base("name=ToolBorrowingEntities")
         {
         }
-    
+
+        public ToolBorrowingEntities(string connectionString)
+            : base(connectionString)
+        {
+        }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -40,7 +45,7 @@ namespace BaseDeDatosTarea
         {
             var userIdParameter = userId.HasValue ?
                 new ObjectParameter("UserId", userId) :
-                new ObjectParameter("UserId", typeof(int));
+                new ObjectParameter("UserId", typeof(string));
     
             var toolIdParameter = toolId.HasValue ?
                 new ObjectParameter("ToolId", toolId) :
