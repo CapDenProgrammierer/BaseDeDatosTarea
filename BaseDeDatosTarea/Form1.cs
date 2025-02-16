@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -104,6 +105,69 @@ namespace BaseDeDatosTarea
             else
             {
                 MessageBox.Show("Credenciales incorrectas, por favor verifique sus datos.");
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            // Supongamos que tienes un TextBox: txtDeleteUserName
+            string userNameToDelete = textBox1.Text.Trim();
+
+            if (string.IsNullOrEmpty(userNameToDelete))
+            {
+                MessageBox.Show("Debe ingresar el nombre del usuario a eliminar.");
+                return;
+            }
+
+            try
+            {
+                using (var context = new ToolBorrowingEntities())
+                {
+                    // Ejecutar el procedimiento almacenado DeleteUser
+                    context.Database.ExecuteSqlCommand(
+                        "EXEC DeleteUser @UserName",
+                        new SqlParameter("@UserName", userNameToDelete)
+                    );
+                }
+                MessageBox.Show("Usuario eliminado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al eliminar el usuario: " + ex.Message);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Supongamos que tienes los siguientes TextBox en el formulario:
+            // txtNewUserName, txtNewLoginName y txtRoleName
+            string newUserName = textBox1.Text.Trim();
+            string newLoginName = textBox2.Text.Trim();
+            string roleName = textBox3.Text.Trim();
+
+            if (string.IsNullOrEmpty(newUserName) || string.IsNullOrEmpty(newLoginName) || string.IsNullOrEmpty(roleName))
+            {
+                MessageBox.Show("Debe completar todos los campos para crear un usuario.");
+                return;
+            }
+
+            try
+            {
+                using (var context = new ToolBorrowingEntities())
+                {
+                    // Ejecutar el procedimiento almacenado CreateUserWithRole
+                    context.Database.ExecuteSqlCommand(
+                        "EXEC CreateUserWithRole @UserName, @LoginName, @RoleName",
+                        new SqlParameter("@UserName", newUserName),
+                        new SqlParameter("@LoginName", newLoginName),
+                        new SqlParameter("@RoleName", roleName)
+                    );
+                }
+                MessageBox.Show("Usuario creado y rol asignado correctamente (si el rol existe).");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al crear el usuario: " + ex.Message);
             }
         }
     }
